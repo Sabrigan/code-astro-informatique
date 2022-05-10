@@ -111,11 +111,17 @@ def P1():
 	import pandas as pd
 	from progress.bar import Bar
 	import gc
+	import numpy as np
 	
 	# a faire: le scrapping de la page pour avoir la liste de tt les fichiers
 	url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 	liste_fichier=scrapp(url)
 	
+	max_donnee=5
+	
+	liste_rand=np.random.choice(liste_fichier, max_donnee)
+	
+	bar = Bar('importation',max=max_donnee)
 	# on prend le premier element
 	# on telecharge un fichier en archive et on l'enregistre
 	i=0
@@ -127,20 +133,20 @@ def P1():
 	#netoyage de df
 	clear_df(df)
 	
+	bar.next()
 	#on va supprimer le ficher gzip
 	os.remove(liste_fichier[i])
 	
 	#----------------------------------------------------
-	bar = Bar('importation',max=len(liste_fichier)-1)
-	while i<len(liste_fichier)-1:
+	while i<len(liste_rand)-1:
 		#i<len(liste_fichier)-1:
 		# on telecharge un autre fichier en archive et on l'enregistre
 		i=i+1
 
 		upload_file(liste_fichier,url,i)
 
-		if i>1 and i%100==1:
-			df = pd.read_csv('myFile.csv', header=0)
+		#if i>1 and i%100==1:
+		df = pd.read_csv('myFile.csv', header=0)
 		
 		#creer un df de pandas depuis le fichier csv
 		df2 = pd.read_csv(liste_fichier[i],compression = 'gzip', header=0)
@@ -155,12 +161,12 @@ def P1():
 		gc.collect(0)
 		gc.collect(1)
 		gc.collect(2)
-		if i%100==0:
-			df.to_csv('myFile.csv')
-			del(df)
-			gc.collect(0)
-			gc.collect(1)
-			gc.collect(2)
+		#if i%100==0:
+		#	df.to_csv('myFile.csv')
+		#	del(df)
+		#	gc.collect(0)
+		#	gc.collect(1)
+		#	gc.collect(2)
 		bar.next()
 	bar.finish()
 	del(bar)
@@ -171,8 +177,8 @@ def P1():
 
 	#ecrire le nouveau df dans un fichier
 	df.to_csv('myFile.csv')
-	del(df)
-	gc.collect()
+	#del(df)
+	#gc.collect()
 
 	
 	print('traitement des données planetes')
@@ -225,10 +231,10 @@ def P1():
 	bar1.finish()
 
 	df.to_csv('myFile3.csv')
-	del(df,bar1,bar2)
-	gc.collect(0)
-	gc.collect(1)
-	gc.collect(2)
+	#del(df,bar1,bar2)
+	#gc.collect(0)
+	#gc.collect(1)
+	#gc.collect(2)
 
 def P4():
 	import matplotlib.pyplot as plt

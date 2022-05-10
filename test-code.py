@@ -8,8 +8,8 @@ import os
 import gzip
 import shutil
 import matplotlib.pyplot as plt
-import seaborn as sns	
-"""
+import seaborn as sns
+
 url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 
 page = urllib.request.urlopen(url,timeout=20)
@@ -21,7 +21,13 @@ liste_fichier=[]
 for a in soup.find_all('a', href=True):
 	if "Gaia" in a['href']:
 		liste_fichier.append(a['href'])
+max_d=5
 
+liste_hazar=np.random.choice(liste_fichier, max_d)
+
+print(liste_hazar)
+
+"""
 #print(len(liste_fichier))
 
 i=0
@@ -126,7 +132,8 @@ for i in range(len(df_planet)):
 				df_star.at[j,'exopl_nb']=df_star.exopl_nb[j]+1
 
 df_star.to_csv('myFile3.csv')
-"""
+
+
 file_star='myFile3.csv'
 df_star=pd.read_csv(file_star, header=0)
 
@@ -158,7 +165,7 @@ plt.ylim((0.000001,1000000))
 fig.figimage(im,10,10, zorder=3, alpha=0.1)
 
 plt.show()
-
+"""
 
 
 
