@@ -117,7 +117,7 @@ def P1():
 	url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 	liste_fichier=scrapp(url)
 	
-	max_donnee=55
+	max_donnee=100
 	
 	liste_rand=np.random.choice(liste_fichier, max_donnee)
 	
@@ -146,7 +146,7 @@ def P1():
 		upload_file(liste_fichier,url,i)
 
 		#if i>1 and i%100==1:
-		df = pd.read_csv('myFile.csv', header=0)
+		#	df = pd.read_csv('myFile.csv', header=0)
 		
 		#creer un df de pandas depuis le fichier csv
 		df2 = pd.read_csv(liste_fichier[i],compression = 'gzip', header=0)
