@@ -117,7 +117,7 @@ def P1():
 	url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 	liste_fichier=scrapp(url)
 	
-	max_donnee=5
+	max_donnee=55
 	
 	liste_rand=np.random.choice(liste_fichier, max_donnee)
 	
