@@ -117,7 +117,7 @@ def P1():
 	url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 	liste_fichier=scrapp(url)
 	
-	max_donnee=5
+	max_donnee=15
 	
 	liste_rand=np.random.choice(liste_fichier, max_donnee)
 	
@@ -125,17 +125,17 @@ def P1():
 	# on prend le premier element
 	# on telecharge un fichier en archive et on l'enregistre
 	i=0
-	upload_file(liste_fichier,url,i)
+	upload_file(liste_rand,url,i)
 		
 	#creer un df de pandas depuis le fichier 
-	df = pd.read_csv(liste_fichier[i],compression='gzip',header=0)
+	df = pd.read_csv(liste_rand[i],compression='gzip',header=0)
 	
 	#netoyage de df
 	clear_df(df)
 	
 	bar.next()
 	#on va supprimer le ficher gzip
-	os.remove(liste_fichier[i])
+	os.remove(liste_rand[i])
 	
 	#----------------------------------------------------
 	while i<len(liste_rand)-1:
@@ -143,17 +143,17 @@ def P1():
 		# on telecharge un autre fichier en archive et on l'enregistre
 		i=i+1
 
-		upload_file(liste_fichier,url,i)
+		upload_file(liste_rand,url,i)
 
 		#if i>1 and i%100==1:
 		#	df = pd.read_csv('myFile.csv', header=0)
 		
 		#creer un df de pandas depuis le fichier csv
-		df2 = pd.read_csv(liste_fichier[i],compression = 'gzip', header=0)
+		df2 = pd.read_csv(liste_rand[i],compression = 'gzip', header=0)
 		clear_df(df2)
 		
 		#on va supprimer le ficher archive
-		os.remove(liste_fichier[i])
+		os.remove(liste_rand[i])
 
 		#concatener deux df 
 		df=pd.concat([df,df2], ignore_index= True)
@@ -265,10 +265,7 @@ def P4():
 
 	#palette divergente pour les temperature des etoiles
 	pal1= sns.diverging_palette(20, 225, as_cmap=True)
-	g=sns.scatterplot(ax =ax1, x='astrometric_pseudo_colour', y='lum_val', hue='teff_val', palette=pal1, data=df_star)
-	
-	#luminosité en echelle logaritmique
-	g.set_yscale("log")
+	g=sns.scatterplot(ax =ax1, x='astrometric_pseudo_colour', y='lum_val', hue='teff_val', palette=pal1, data=df_star, sizes=(5))
 	
 	# titre de la figure
 	g.set_title('luminosité=f(couleur)')
@@ -276,6 +273,10 @@ def P4():
 	#limite pour x et y
 	plt.xlim((-0.35,2.25))
 	plt.ylim((0.000001,1000000))
+	
+	#luminosité en echelle logaritmique
+	g.set_yscale("log")
+	
 	
 	
 	fig.figimage(im,10,10, zorder=3, alpha=0.1)
@@ -285,6 +286,56 @@ def P3():
 	
 def P2():
 """
+def P5():
+	import matplotlib.pyplot as plt
+	import seaborn as sns	
+	import matplotlib.image as image
+	import pandas as pd
+	from bokeh.plotting import figure, show
+	from bokeh.models import CustomJS, Div, Row
+	from bokeh.palettes import RdYlBu10
+	from bokeh.transform import log_cmap
+
+	
+	# echelle logarithmique pour la luminosité
+	# faire un graphe avec luminosté (lum_val) en ordonnée et couleur ou 
+	# temperature en abscisse (astrometric_pseudo_colour ou teff_val)
+	# borne ordonnée: 0,000001 - 1 000 000 (echelle log)
+	# borne abscisse (couleur): -0,35 - 2,25 (0,1 par graduation)
+	# borne abscisse (teff): 3000K-300000K (graduation log)
+	
+	#réimportation du fichier de donnée
+	print('preparation de la sortie')
+	file_star='myFile3.csv'
+	df_star=pd.read_csv(file_star, header=0)
+	
+	# fichier en filigrane
+	file1='diagramme_HR_blanc.png'
+	url = "https://cdn3.iconfinder.com/data/icons/line/36/dog_head-512.png"
+	d1 = Div(text = '<div style="position: absolute; left:-678px; top:-12px"><img src=' + file1 + ' style="width:720px; height:820px; opacity: 0.3"></div>')
+	
+	fig, ax1 = plt.subplots()
+	#palette divergente pour les temperature des etoiles
+	#pal1= sns.diverging_palette(20, 225, as_cmap=True)
+	
+	#g=sns.scatterplot(ax =ax1, x='astrometric_pseudo_colour', y='lum_val', hue='teff_val', palette=pal1, data=df_star, sizes=(5))
+	g=figure(title='luminosité=f(couleur)', 
+			x_axis_label='couleur', y_axis_label='luminosité',
+			x_axis_type='linear', y_axis_type='log',
+			x_range=(-0.35, 2.25), y_range=(0.000001,1000000),
+			plot_width=655, plot_height=816)
+	
+	#palette
+	invert_palette=RdYlBu10[::-1]
+	mapper = log_cmap(field_name='teff_val', palette=invert_palette[:] ,low=2000 ,high=40000)
+	
+	g.dot(x='astrometric_pseudo_colour', y='lum_val', source=df_star, color=mapper)
+	
+
+	
+	#fig.figimage(im,10,10, zorder=3, alpha=0.1)
+	#plt.show()
+	show(Row(g,d1))
 
 	
 def main():
@@ -296,8 +347,10 @@ def main():
 	print('entrainement du modele + resultat')
 	P3()
 	"""
-	print('print des resultats')
-	P4()
+	#print('print des resultats seaborn')
+	#P4()
+	print('print des resultats bokeh')
+	P5()
 	
 if __name__ == "__main__":
 	main()
