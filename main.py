@@ -117,7 +117,7 @@ def P1():
 	url = 'http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/'
 	liste_fichier=scrapp(url)
 	
-	max_donnee=15
+	max_donnee=5
 	
 	liste_rand=np.random.choice(liste_fichier, max_donnee)
 	
@@ -286,15 +286,14 @@ def P3():
 	
 def P2():
 """
-def P5():
-	import matplotlib.pyplot as plt
-	import seaborn as sns	
-	import matplotlib.image as image
+def P6():
 	import pandas as pd
 	from bokeh.plotting import figure, show
 	from bokeh.models import CustomJS, Div, Row
 	from bokeh.palettes import RdYlBu10
 	from bokeh.transform import log_cmap
+	from bokeh.io import curdoc
+	import matplotlib.pyplot as plt
 
 	
 	# echelle logarithmique pour la luminosité
@@ -309,34 +308,86 @@ def P5():
 	file_star='myFile3.csv'
 	df_star=pd.read_csv(file_star, header=0)
 	
-	# fichier en filigrane
-	file1='diagramme_HR_blanc.png'
-	url = "https://cdn3.iconfinder.com/data/icons/line/36/dog_head-512.png"
-	d1 = Div(text = '<div style="position: absolute; left:-678px; top:-12px"><img src=' + file1 + ' style="width:720px; height:820px; opacity: 0.3"></div>')
-	
-	fig, ax1 = plt.subplots()
-	#palette divergente pour les temperature des etoiles
-	#pal1= sns.diverging_palette(20, 225, as_cmap=True)
-	
-	#g=sns.scatterplot(ax =ax1, x='astrometric_pseudo_colour', y='lum_val', hue='teff_val', palette=pal1, data=df_star, sizes=(5))
+		
+	#mise en place du plot
 	g=figure(title='luminosité=f(couleur)', 
 			x_axis_label='couleur', y_axis_label='luminosité',
 			x_axis_type='linear', y_axis_type='log',
 			x_range=(-0.35, 2.25), y_range=(0.000001,1000000),
 			plot_width=655, plot_height=816)
 	
+	
 	#palette
 	invert_palette=RdYlBu10[::-1]
 	mapper = log_cmap(field_name='teff_val', palette=invert_palette[:] ,low=2000 ,high=40000)
 	
+	# fichier en filigrane
+	#file1='diagramme_HR_blanc.png'
+	#d1 = Div(text = '<div style="position: absolute; left:-678px; top:-12px"><img src=' + file1 + ' style="width:500px; height:600px; opacity: 0.5"></div>')
+	#g.image_url(url=['/static/diagramme_HR_blanc.png'], x=[0], y=[0], w=[720], h=[820], anchor="bottom_left")
+	
+	#curdoc().add_root(g)
+	
 	g.dot(x='astrometric_pseudo_colour', y='lum_val', source=df_star, color=mapper)
 	
-
+	#show(Row(g,d1))
+	#show(Row(d1,g))
+	show(g)
 	
-	#fig.figimage(im,10,10, zorder=3, alpha=0.1)
-	#plt.show()
+def P5():
+	import pandas as pd
+	import matplotlib.pyplot as plt
+	from bokeh.palettes import RdYlBu10
+	from bokeh.transform import log_cmap
+	
+	# echelle logarithmique pour la luminosité
+	# faire un graphe avec luminosté (lum_val) en ordonnée et couleur ou 
+	# temperature en abscisse (astrometric_pseudo_colour ou teff_val)
+	# borne ordonnée: 0,000001 - 1 000 000 (echelle log)
+	# borne abscisse (couleur): -0,35 - 2,25 (0,1 par graduation)
+	# borne abscisse (teff): 3000K-300000K (graduation log)
+	
+	#réimportation du fichier de donnée
+	print('preparation de la sortie')
+	file_star='myFile3.csv'
+	df_star=pd.read_csv(file_star, header=0)
+	
+	#palette
+	invert_palette=RdYlBu10[::-1]
+	mapper = log_cmap(field_name='teff_val', palette=invert_palette[:] ,low=2000 ,high=40000)
+	
+	# fichier en f
+	img = plt.imread("diagramme_HR_blanc.png")
+	fig, ax = plt.subplots()
+	ax.imshow(img)
+	ax.scatter(x=df_star.astrometric_pseudo_colour, y=df_star.lum_val)
+	plt.show()	
+	"""
+	#mise en place du plot
+	g=figure(title='luminosité=f(couleur)', 
+			x_axis_label='couleur', y_axis_label='luminosité',
+			x_axis_type='linear', y_axis_type='log',
+			x_range=(-0.35, 2.25), y_range=(0.000001,1000000),
+			plot_width=655, plot_height=816)
+	
+	
+	#palette
+	invert_palette=RdYlBu10[::-1]
+	mapper = log_cmap(field_name='teff_val', palette=invert_palette[:] ,low=2000 ,high=40000)
+	
+	# fichier en filigrane
+	file1='diagramme_HR_blanc.png'
+	d1 = Div(text = '<div style="position: absolute; left:-678px; top:-12px"><img src=' + file1 + ' style="width:500px; height:600px; opacity: 0.5"></div>')
+	#g.image_url(url=['/static/diagramme_HR_blanc.png'], x=[0], y=[0], w=[720], h=[820], anchor="bottom_left")
+	
+	#curdoc().add_root(g)
+	
+	g.dot(x='astrometric_pseudo_colour', y='lum_val', source=df_star, color=mapper)
+	
 	show(Row(g,d1))
-
+	#show(Row(d1,g))
+	#show(g)
+"""
 	
 def main():
 	print('importation et traitement des données ')
@@ -350,7 +401,10 @@ def main():
 	#print('print des resultats seaborn')
 	#P4()
 	print('print des resultats bokeh')
-	P5()
+	P6()
+	#print('print des resultats matplot')
+	#P5()
+	
 	
 if __name__ == "__main__":
 	main()
